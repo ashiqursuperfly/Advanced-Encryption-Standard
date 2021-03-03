@@ -74,7 +74,7 @@ def g(w3: str):
 
     return g_w3
 
-def findroundkey(keyhexstr, case):
+def generate_round_key(keyhexstr, case):
     
     w0 = keyhexstr[0:8]
     w1 = keyhexstr[8:16]
@@ -127,7 +127,7 @@ def main():
     roundkey = PassPhrase.get_bitvector_in_hex()
     print(0, ':', roundkey)
     for i in range(1, 11):
-        roundkey = findroundkey(roundkey, i)
+        roundkey = generate_round_key(roundkey, i)
         print(i, ':', roundkey)
 
     # print(str(hex(0x0F)))
