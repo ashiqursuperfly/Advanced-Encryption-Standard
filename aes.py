@@ -1,5 +1,23 @@
 from BitVector import *
 
+def get_round_constant(round: int):
+    
+    RC = {
+        1: '01000000',
+        2: '02000000',
+        3: '04000000',
+        4: '08000000',
+        5: '10000000',
+        6: '20000000',
+        7: '40000000',
+        8: '80000000',
+        9: '1b000000',
+        10: '36000000'
+    }
+
+    return RC[round]
+
+
 def hex_to_string(hexdigit):
     
     _ = hex(hexdigit)[2:]
@@ -8,8 +26,6 @@ def hex_to_string(hexdigit):
         return '0' + _
     else:
         return _    
-
-
 
 def sbox(hexstr: str, x: str, y: str):
     
@@ -74,53 +90,22 @@ def g(w3: str):
 
     return g_w3
 
-def generate_round_key(keyhexstr, case):
+def generate_round_key(keyhexstr, round):
     
     w0 = keyhexstr[0:8]
     w1 = keyhexstr[8:16]
     w2 = keyhexstr[16:24]
     w3 = keyhexstr[24:32]
-
-    if case == 4:
-        DEBUG = True
-    else:
-        DEBUG = False    
     
-    g_w3 = g(w3)
-    
-    if(case == 1):
-        g_w3 = xor(g_w3, '01000000')
-    elif(case == 2):
-        g_w3 = xor(g_w3, '02000000')
-    elif (case == 3):
-        g_w3 = xor(g_w3, '04000000')
-    elif (case == 4):
-        g_w3 = xor(g_w3, '08000000')
-    elif (case == 5):
-        g_w3 = xor(g_w3, '10000000')
-    elif (case == 6):
-        g_w3 = xor(g_w3, '20000000')
-    elif (case == 7):
-        g_w3 = xor(g_w3, '40000000')
-    elif (case == 8):
-        g_w3 = xor(g_w3, '80000000')
-    elif (case == 9):
-        g_w3 = xor(g_w3, '1b000000')
-    elif (case == 10):
-        g_w3 = xor(g_w3, '36000000')
-
-    # DEBUG:
-    # print("g(w3)", g_w3)    
+    g_w3 = xor(g(w3), get_round_constant(round))
 
     w4 = xor(w0, g_w3)
     w5 = xor(w1, w4)
     w6 = xor(w2, w5)
     w7 = xor(w3, w6)
     
-    temp3 = w4 + w5 + w6 + w7
+    return (w4 + w5 + w6 + w7)
     
-    return temp3
-
 
 def main():
     PassPhrase=BitVector(textstring="Thats my Kung Fu")
