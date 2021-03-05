@@ -18,6 +18,11 @@ def get_round_constant(round: int):
     return RC[round]
 
 
+"""
+    - Removes leading 0x from hex string.
+    - returns a two char hex string (adds leading 0 to make single digit hex into double digit)
+"""
+
 def hex_to_string(hexdigit):
     
     _ = hex(hexdigit)[2:]
