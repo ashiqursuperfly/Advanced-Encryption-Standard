@@ -22,7 +22,6 @@ def get_round_constant(round: int):
     - Removes leading 0x from hex string.
     - returns a two char hex string (adds leading 0 to make single digit hex into double digit)
 """
-
 def hex_to_string(hexdigit):
     
     _ = hex(hexdigit)[2:]
@@ -64,22 +63,22 @@ def sub_byte(hexstr: str):
 
     return res
 
-def shiftrow(temp2):
+def shiftrow(hexstring: str):
 
-    if(len(temp2)==8):
-        temp3=temp2[2]+temp2[3]+temp2[4]+temp2[5]+temp2[6]+temp2[7]+temp2[0]+temp2[1]
-        return temp3
+    if(len(hexstring)==8):
+        res = hexstring[2] + hexstring[3] + hexstring[4] + hexstring[5] + hexstring[6] + hexstring[7] + hexstring[0] + hexstring[1]
+        return res
     else:
         # TODO:
         pass
-        # temp3=temp2[0]+temp2[1]+temp2[10]+temp2[11]+temp2[20]+temp2[21]+temp2[30]+temp2[31]+temp2[8]+temp2[9]+temp2[18]+temp2[19]+temp2[28] + temp2[29] + temp2[6] + temp2[7] + temp2[16] + temp2[17] + temp2[26] + temp2[27] + temp2[4] + temp2[5] + temp2[14] + temp2[15] + temp2[24] + temp2[25] + temp2[2] + temp2[3] + temp2[12] + temp2[13] + temp2[22] + temp2[23]
+        # temp3=hexstring[0]+hexstring[1]+hexstring[10]+hexstring[11]+hexstring[20]+hexstring[21]+hexstring[30]+hexstring[31]+hexstring[8]+hexstring[9]+hexstring[18]+hexstring[19]+hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7] + hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15] + hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
         # return temp3
 
-def xor(temp1,temp2):
-        temp1=BitVector(hexstring=temp1)
-        temp2=BitVector(hexstring=temp2)
-        temp3=temp1^temp2
-        return temp3.get_bitvector_in_hex()
+def xor(op1: str, op2: str):
+        op1 = BitVector(hexstring=op1)
+        op2 = BitVector(hexstring=op2)
+        res = op1^op2
+        return res.get_bitvector_in_hex()
 
 def g(w3: str):
     g_w3 = str(w3)
