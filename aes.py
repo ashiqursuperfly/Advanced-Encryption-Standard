@@ -70,7 +70,7 @@ def shiftrow(hexstring: str):
         return res
     else:
         # TODO:
-        pass
+        print("Error: shiftrow else")
         # temp3=hexstring[0]+hexstring[1]+hexstring[10]+hexstring[11]+hexstring[20]+hexstring[21]+hexstring[30]+hexstring[31]+hexstring[8]+hexstring[9]+hexstring[18]+hexstring[19]+hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7] + hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15] + hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
         # return temp3
 
@@ -80,28 +80,28 @@ def xor(op1: str, op2: str):
         res = op1^op2
         return res.get_bitvector_in_hex()
 
-def g(w3: str):
+def g(w3: str, round: int):
     g_w3 = str(w3)
+
+    # circular byte shift
     g_w3 = shiftrow(g_w3)
     
-    # DEBUG:
-    # print("shiftrow(w3)", g_w3)    
-
+    # byte substitution
     g_w3 = sub_byte(g_w3)
 
-    # DEBUG:
-    # print("subbyte(shiftrow(g(w3)))", g_w3)    
+    # add round constant
+    g_w3 = xor(g_w3, get_round_constant(round))
 
     return g_w3
 
-def generate_round_key(keyhexstr, round):
+def generate_round_key(keyhexstr: str, round: int):
     
     w0 = keyhexstr[0:8]
     w1 = keyhexstr[8:16]
     w2 = keyhexstr[16:24]
     w3 = keyhexstr[24:32]
     
-    g_w3 = xor(g(w3), get_round_constant(round))
+    g_w3 = g(w3, round)
 
     w4 = xor(w0, g_w3)
     w5 = xor(w1, w4)
@@ -112,9 +112,13 @@ def generate_round_key(keyhexstr, round):
     
 
 def main():
-    PassPhrase = BitVector(textstring="Thats my Kung Fu")
+    key = BitVector(textstring="Thats my Kung Fu")
+    plaintext = BitVector(textstring="Two One Nine Two")
+
+    # TODO: validate key and plaintext lengths to be 16 or add padding
+    
     roundkeys = list()
-    roundkey = PassPhrase.get_bitvector_in_hex()
+    roundkey = key.get_bitvector_in_hex()
     roundkeys.append(roundkey)
     
     for i in range(1, 11):
