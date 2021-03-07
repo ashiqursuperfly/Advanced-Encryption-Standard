@@ -74,11 +74,13 @@ def shiftrow(hexstring: str):
         # temp3=hexstring[0]+hexstring[1]+hexstring[10]+hexstring[11]+hexstring[20]+hexstring[21]+hexstring[30]+hexstring[31]+hexstring[8]+hexstring[9]+hexstring[18]+hexstring[19]+hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7] + hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15] + hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
         # return temp3
 
-def xor(op1: str, op2: str):
-        op1 = BitVector(hexstring=op1)
-        op2 = BitVector(hexstring=op2)
-        res = op1^op2
-        return res.get_bitvector_in_hex()
+def xor(op1hexstr: str, op2hexstr: str):
+    
+    op1 = BitVector(hexstring=op1hexstr)
+    op2 = BitVector(hexstring=op2hexstr)
+    res = op1^op2
+    
+    return res.get_bitvector_in_hex()
 
 def g(w3: str, round: int):
     g_w3 = str(w3)
@@ -96,6 +98,7 @@ def g(w3: str, round: int):
 
 def generate_round_key(keyhexstr: str, round: int):
     
+    # one word == one byte == one ascii character
     w0 = keyhexstr[0:8]
     w1 = keyhexstr[8:16]
     w2 = keyhexstr[16:24]
@@ -108,6 +111,7 @@ def generate_round_key(keyhexstr: str, round: int):
     w6 = xor(w2, w5)
     w7 = xor(w3, w6)
     
+    # 4 words == 1 round key
     return (w4 + w5 + w6 + w7)
     
 
@@ -123,10 +127,12 @@ def main():
     
     for i in range(1, 11):
         roundkey = generate_round_key(roundkey, i)
-        # print(i, ':', roundkey)
+        print(i, ':', roundkey)
         roundkeys.append(roundkey)
 
-    print(roundkeys)
+    statematrixstring = xor(plaintext.get_bitvector_in_hex(), roundkeys[0])
+    
+    print(statematrixstring)
         
 
 main()        
