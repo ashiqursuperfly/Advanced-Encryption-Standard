@@ -1,5 +1,10 @@
 from BitVector import *
 
+def get_state_matrix_position_from_hex_str(hexstring: str, idx: int):
+    return hex_to_string[idx*2: idx*2 + 1]
+
+
+
 def get_round_constant(round: int):
     
     RC = {
@@ -22,6 +27,7 @@ def get_round_constant(round: int):
     - Removes leading 0x from hex string.
     - returns a two char hex string (adds leading 0 to make single digit hex into double digit)
 """
+# TODO: change this function name
 def hex_to_string(hexdigit):
     
     _ = hex(hexdigit)[2:]
@@ -63,16 +69,15 @@ def sub_byte(hexstr: str):
 
     return res
 
+# TODO: change func name
 def shiftrow(hexstring: str):
 
-    if(len(hexstring)==8):
+    if len(hexstring) == 8:
         res = hexstring[2] + hexstring[3] + hexstring[4] + hexstring[5] + hexstring[6] + hexstring[7] + hexstring[0] + hexstring[1]
         return res
     else:
-        # TODO:
-        print("Error: shiftrow else")
-        # temp3=hexstring[0]+hexstring[1]+hexstring[10]+hexstring[11]+hexstring[20]+hexstring[21]+hexstring[30]+hexstring[31]+hexstring[8]+hexstring[9]+hexstring[18]+hexstring[19]+hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7] + hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15] + hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
-        # return temp3
+        temp3=hexstring[0]+hexstring[1]+hexstring[10]+hexstring[11]+hexstring[20]+hexstring[21]+hexstring[30]+hexstring[31]+hexstring[8]+hexstring[9]+hexstring[18]+hexstring[19]+hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7] + hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15] + hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
+        return temp3
 
 def xor(op1hexstr: str, op2hexstr: str):
     
@@ -111,14 +116,72 @@ def generate_round_key(keyhexstr: str, round: int):
     w6 = xor(w2, w5)
     w7 = xor(w3, w6)
     
-    # 4 words == 1 round key
+    # 4 words form 1 round key
     return (w4 + w5 + w6 + w7)
     
+def mult(bv1: BitVector, bv2: BitVector):
+    modulus = BitVector(bitstring='100011011')
+    return bv1.gf_multiply_modular(bv2, modulus, 8)
+
+def gps(hexstring: str, idx: int):
+    _x =  BitVector(hexstring=hexstring[idx*2 : idx*2 + 2])
+    # print(_x.get_bitvector_in_hex())
+    return _x
+
+MixCol = BitVector(hexstring="02010103030201010103020101010302").get_bitvector_in_hex()
+
+def get_mix_columned_col(rowno: int, hexstr1: str, hexstr2: str):
+    _0 = mult(gps(hexstr1, 0), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 4), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 8), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 12), gps(hexstr2, rowno * 4 + 3))
+    # print(_0.get_bitvector_in_hex())
+    _1 = mult(gps(hexstr1, 1), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 5), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 9), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 13), gps(hexstr2, rowno * 4 + 3))
+    # print(_1.get_bitvector_in_hex())
+    _2 = mult(gps(hexstr1, 2), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 6), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 10), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 14), gps(hexstr2, rowno * 4 + 3))
+    # print(_2.get_bitvector_in_hex())
+    _3 = mult(gps(hexstr1, 3), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 7), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 11), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 15), gps(hexstr2, rowno * 4 + 3))
+    # print(_3.get_bitvector_in_hex())
+
+    return (_0.get_bitvector_in_hex() + _1.get_bitvector_in_hex() + _2.get_bitvector_in_hex() + _3.get_bitvector_in_hex())
+
+
+def encryption_round_zero(statematrixstring: str, roundkeys: list):
+    return xor(statematrixstring, roundkeys[0])
+
+def encryption_round_one_to_nine(statematrixstring: str, roundkeys: list):
+
+    for round in range(1, 10):
+
+        statematrixstring = sub_byte(statematrixstring)
+
+        statematrixstring = shiftrow(statematrixstring)
+
+        statematrixstring = get_mix_columned_col(0, MixCol, statematrixstring) + get_mix_columned_col(1, MixCol, statematrixstring) + get_mix_columned_col(2, MixCol, statematrixstring) + get_mix_columned_col(3, MixCol, statematrixstring)
+
+        # print("statematrix mxcol", statematrixstring)
+
+        statematrixstring = xor(statematrixstring, roundkeys[round])
+
+
+    return statematrixstring
+    
+
+def encryption_round_ten(statematrixstring: str, roundkeys: list):
+    statematrixstring = sub_byte(statematrixstring)
+
+    statematrixstring = shiftrow(statematrixstring)
+
+    # print("statematrix mxcol", statematrixstring)
+
+    statematrixstring = xor(statematrixstring, roundkeys[10])
+
+    return statematrixstring
+
 
 def main():
     key = BitVector(textstring="Thats my Kung Fu")
     plaintext = BitVector(textstring="Two One Nine Two")
 
+    statematrixstring = plaintext.get_bitvector_in_hex()
+    
     # TODO: validate key and plaintext lengths to be 16 or add padding
     
     roundkeys = list()
@@ -130,9 +193,12 @@ def main():
         print(i, ':', roundkey)
         roundkeys.append(roundkey)
 
-    statematrixstring = xor(plaintext.get_bitvector_in_hex(), roundkeys[0])
+    statematrixstring = encryption_round_zero(statematrixstring, roundkeys)
     
-    print(statematrixstring)
-        
+    statematrixstring = encryption_round_one_to_nine(statematrixstring, roundkeys)
+    
+    statematrixstring = encryption_round_ten(statematrixstring, roundkeys)
+
+    print("encrypted hash", statematrixstring)
 
 main()        

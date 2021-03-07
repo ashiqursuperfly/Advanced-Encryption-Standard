@@ -14,6 +14,8 @@ Install The BitVector Library
 """Tables"""
 
 from BitVector import *
+import numpy as np
+
 Sbox = [
     [0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76],
     [0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0],
@@ -89,14 +91,14 @@ def shiftrow(temp2):
         return temp3
 
 
-key = BitVector(textstring="my K")
-key = key.get_bitvector_in_hex()
-plaintext = BitVector(textstring="HelloWorld(853)")
-# print(plaintext.get_bitvector_in_hex())
+# key = BitVector(textstring="my K")
+# key = key.get_bitvector_in_hex()
+# plaintext = BitVector(textstring="HelloWorld(853)")
+# # print(plaintext.get_bitvector_in_hex())
 
-key = shiftrow(key)
-print(key)
-print(type(key))
+# key = shiftrow(key)
+# print(key)
+# print(type(key))
 
 
 def sbox(hexstr: str, x: str, y: str):
@@ -112,8 +114,44 @@ def sub_byte(hexstr: str):
     return res
 
 
-_ = sbox(key, 0, 1) + sbox(key, 2, 3) + sbox(key, 4, 5) + sbox(key, 6, 7)
-print(_)
+# _ = sbox(key, 0, 1) + sbox(key, 2, 3) + sbox(key, 4, 5) + sbox(key, 6, 7)
+# print(_)
 
-print(sub_byte(key))
+# print(sub_byte(key))
 
+
+
+
+
+bv1 = BitVector(hexstring="02010103030201010103020101010302")
+bv2 = BitVector(hexstring="632fafa2eb93c7209f92abcba0c0302b")
+
+def mult(bv1: BitVector, bv2: BitVector):
+    modulus = BitVector(bitstring='100011011')
+    return bv1.gf_multiply_modular(bv2, modulus, 8)
+
+
+def gps(hexstring: str, idx: int):
+    _x =  BitVector(hexstring=hexstring[idx*2 : idx*2 + 2])
+    # print(_x.get_bitvector_in_hex())
+    return _x
+
+def get_mix_columned_row(rowno: int, hexstr1: str, hexstr2: str):
+    _0 = mult(gps(hexstr1, 0), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 4), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 8), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 12), gps(hexstr2, rowno * 4 + 3))
+    # print(_0.get_bitvector_in_hex())
+    _1 = mult(gps(hexstr1, 1), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 5), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 9), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 13), gps(hexstr2, rowno * 4 + 3))
+    # print(_1.get_bitvector_in_hex())
+    _2 = mult(gps(hexstr1, 2), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 6), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 10), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 14), gps(hexstr2, rowno * 4 + 3))
+    # print(_2.get_bitvector_in_hex())
+    _3 = mult(gps(hexstr1, 3), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 7), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 11), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 15), gps(hexstr2, rowno * 4 + 3))
+    # print(_3.get_bitvector_in_hex())
+
+    print(_0.get_bitvector_in_hex() + _1.get_bitvector_in_hex() + _2.get_bitvector_in_hex() + _3.get_bitvector_in_hex())
+
+# print(get_state_matrix_position_from_hex_str(bv1.get_bitvector_in_hex(), 0))
+# print(get_state_matrix_position_from_hex_str(bv2.get_bitvector_in_hex(), 0))
+
+get_mix_columned_row(0, bv1.get_bitvector_in_hex(), bv2.get_bitvector_in_hex())
+get_mix_columned_row(1, bv1.get_bitvector_in_hex(), bv2.get_bitvector_in_hex())
+get_mix_columned_row(2, bv1.get_bitvector_in_hex(), bv2.get_bitvector_in_hex())
+get_mix_columned_row(3, bv1.get_bitvector_in_hex(), bv2.get_bitvector_in_hex())
