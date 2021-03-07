@@ -112,14 +112,17 @@ def generate_round_key(keyhexstr, round):
     
 
 def main():
-    PassPhrase=BitVector(textstring="Thats my Kung Fu")
+    PassPhrase = BitVector(textstring="Thats my Kung Fu")
+    roundkeys = list()
     roundkey = PassPhrase.get_bitvector_in_hex()
-    print(0, ':', roundkey)
+    roundkeys.append(roundkey)
+    
     for i in range(1, 11):
         roundkey = generate_round_key(roundkey, i)
-        print(i, ':', roundkey)
+        # print(i, ':', roundkey)
+        roundkeys.append(roundkey)
 
-    # print(str(hex(0x0F)))
+    print(roundkeys)
         
 
 main()        
