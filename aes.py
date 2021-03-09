@@ -63,8 +63,7 @@ def sub_byte(hexstr: str):
 
     return res
 
-# TODO: change func name
-def shiftrow(hexstring: str):
+def circular_byte_shift(hexstring: str):
 
     if len(hexstring) == 8:
         res = hexstring[2] + hexstring[3] + hexstring[4] + hexstring[5] + hexstring[6] + hexstring[7] + hexstring[0] + hexstring[1]
@@ -88,7 +87,7 @@ def g(w3: str, round: int):
     g_w3 = str(w3)
 
     # circular byte shift
-    g_w3 = shiftrow(g_w3)
+    g_w3 = circular_byte_shift(g_w3)
     
     # byte substitution
     g_w3 = sub_byte(g_w3)
@@ -120,21 +119,21 @@ def mult(bv1: BitVector, bv2: BitVector):
     modulus = BitVector(bitstring='100011011')
     return bv1.gf_multiply_modular(bv2, modulus, 8)
 
-def gps(hexstring: str, idx: int):
+def hex_at_idx(hexstring: str, idx: int):
     _x =  BitVector(hexstring=hexstring[idx*2 : idx*2 + 2])
     # print(_x.get_bitvector_in_hex())
     return _x
 
-MixCol = BitVector(hexstring="02010103030201010103020101010302").get_bitvector_in_hex()
+MixCol = "02010103030201010103020101010302"
 
 def get_mix_columned_col(colno: int, hexstr1: str, hexstr2: str):
-    _0 = mult(gps(hexstr1, 0), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 4), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 8), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 12), gps(hexstr2, colno * 4 + 3))
+    _0 = mult(hex_at_idx(hexstr1, 0), hex_at_idx(hexstr2, colno * 4)) ^ mult(hex_at_idx(hexstr1, 4), hex_at_idx(hexstr2, colno * 4 + 1)) ^mult(hex_at_idx(hexstr1, 8), hex_at_idx(hexstr2, colno * 4 + 2)) ^ mult(hex_at_idx(hexstr1, 12), hex_at_idx(hexstr2, colno * 4 + 3))
     # print(_0.get_bitvector_in_hex())
-    _1 = mult(gps(hexstr1, 1), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 5), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 9), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 13), gps(hexstr2, colno * 4 + 3))
+    _1 = mult(hex_at_idx(hexstr1, 1), hex_at_idx(hexstr2, colno * 4)) ^ mult(hex_at_idx(hexstr1, 5), hex_at_idx(hexstr2, colno * 4 + 1)) ^mult(hex_at_idx(hexstr1, 9), hex_at_idx(hexstr2, colno * 4 + 2)) ^ mult(hex_at_idx(hexstr1, 13), hex_at_idx(hexstr2, colno * 4 + 3))
     # print(_1.get_bitvector_in_hex())
-    _2 = mult(gps(hexstr1, 2), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 6), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 10), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 14), gps(hexstr2, colno * 4 + 3))
+    _2 = mult(hex_at_idx(hexstr1, 2), hex_at_idx(hexstr2, colno * 4)) ^ mult(hex_at_idx(hexstr1, 6), hex_at_idx(hexstr2, colno * 4 + 1)) ^mult(hex_at_idx(hexstr1, 10), hex_at_idx(hexstr2, colno * 4 + 2)) ^ mult(hex_at_idx(hexstr1, 14), hex_at_idx(hexstr2, colno * 4 + 3))
     # print(_2.get_bitvector_in_hex())
-    _3 = mult(gps(hexstr1, 3), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 7), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 11), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 15), gps(hexstr2, colno * 4 + 3))
+    _3 = mult(hex_at_idx(hexstr1, 3), hex_at_idx(hexstr2, colno * 4)) ^ mult(hex_at_idx(hexstr1, 7), hex_at_idx(hexstr2, colno * 4 + 1)) ^mult(hex_at_idx(hexstr1, 11), hex_at_idx(hexstr2, colno * 4 + 2)) ^ mult(hex_at_idx(hexstr1, 15), hex_at_idx(hexstr2, colno * 4 + 3))
     # print(_3.get_bitvector_in_hex())
 
     return (_0.get_bitvector_in_hex() + _1.get_bitvector_in_hex() + _2.get_bitvector_in_hex() + _3.get_bitvector_in_hex())
@@ -149,11 +148,9 @@ def encryption_round_one_to_nine(statematrixstring: str, roundkeys: list):
 
         statematrixstring = sub_byte(statematrixstring)
 
-        statematrixstring = shiftrow(statematrixstring)
+        statematrixstring = circular_byte_shift(statematrixstring)
 
         statematrixstring = get_mix_columned_col(0, MixCol, statematrixstring) + get_mix_columned_col(1, MixCol, statematrixstring) + get_mix_columned_col(2, MixCol, statematrixstring) + get_mix_columned_col(3, MixCol, statematrixstring)
-
-        # print("statematrix mxcol", statematrixstring)
 
         statematrixstring = xor(statematrixstring, roundkeys[round])
 
@@ -164,9 +161,7 @@ def encryption_round_one_to_nine(statematrixstring: str, roundkeys: list):
 def encryption_round_ten(statematrixstring: str, roundkeys: list):
     statematrixstring = sub_byte(statematrixstring)
 
-    statematrixstring = shiftrow(statematrixstring)
-
-    # print("statematrix mxcol", statematrixstring)
+    statematrixstring = circular_byte_shift(statematrixstring)
 
     statematrixstring = xor(statematrixstring, roundkeys[10])
 
@@ -177,7 +172,7 @@ def encrypt16(key: str, plaintext: str):
 
     if len(key) != 16 and len(plaintext) != 16:
         raise Exception("Length of key / plaintext segment must be 16") 
-    
+
     key = BitVector(textstring=key)
     plaintext = BitVector(textstring=plaintext)
 
