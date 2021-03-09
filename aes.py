@@ -1,10 +1,5 @@
 from BitVector import *
 
-def get_state_matrix_position_from_hex_str(hexstring: str, idx: int):
-    return hex_to_string[idx*2: idx*2 + 1]
-
-
-
 def get_round_constant(round: int):
     
     RC = {
@@ -27,8 +22,7 @@ def get_round_constant(round: int):
     - Removes leading 0x from hex string.
     - returns a two char hex string (adds leading 0 to make single digit hex into double digit)
 """
-# TODO: change this function name
-def hex_to_string(hexdigit):
+def format_2_digit_hex(hexdigit):
     
     _ = hex(hexdigit)[2:]
     
@@ -58,7 +52,7 @@ def sbox(hexstr: str, x: str, y: str):
         [0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16],
     ]
 
-    return hex_to_string(Sbox[int(hexstr[x], 16)][int(hexstr[y], 16)])
+    return format_2_digit_hex(Sbox[int(hexstr[x], 16)][int(hexstr[y], 16)])
 
 def sub_byte(hexstr: str):
 
@@ -76,8 +70,11 @@ def shiftrow(hexstring: str):
         res = hexstring[2] + hexstring[3] + hexstring[4] + hexstring[5] + hexstring[6] + hexstring[7] + hexstring[0] + hexstring[1]
         return res
     else:
-        temp3=hexstring[0]+hexstring[1]+hexstring[10]+hexstring[11]+hexstring[20]+hexstring[21]+hexstring[30]+hexstring[31]+hexstring[8]+hexstring[9]+hexstring[18]+hexstring[19]+hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7] + hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15] + hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
-        return temp3
+        res = hexstring[0] + hexstring[1] + hexstring[10] + hexstring[11] + hexstring[20] + hexstring[21] + hexstring[30] + hexstring[31]
+        res += hexstring[8] + hexstring[9] + hexstring[18] + hexstring[19] + hexstring[28] + hexstring[29] + hexstring[6] + hexstring[7]
+        res += hexstring[16] + hexstring[17] + hexstring[26] + hexstring[27] + hexstring[4] + hexstring[5] + hexstring[14] + hexstring[15]
+        res += hexstring[24] + hexstring[25] + hexstring[2] + hexstring[3] + hexstring[12] + hexstring[13] + hexstring[22] + hexstring[23]
+        return res
 
 def xor(op1hexstr: str, op2hexstr: str):
     
