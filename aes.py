@@ -127,14 +127,14 @@ def gps(hexstring: str, idx: int):
 
 MixCol = BitVector(hexstring="02010103030201010103020101010302").get_bitvector_in_hex()
 
-def get_mix_columned_col(rowno: int, hexstr1: str, hexstr2: str):
-    _0 = mult(gps(hexstr1, 0), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 4), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 8), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 12), gps(hexstr2, rowno * 4 + 3))
+def get_mix_columned_col(colno: int, hexstr1: str, hexstr2: str):
+    _0 = mult(gps(hexstr1, 0), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 4), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 8), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 12), gps(hexstr2, colno * 4 + 3))
     # print(_0.get_bitvector_in_hex())
-    _1 = mult(gps(hexstr1, 1), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 5), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 9), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 13), gps(hexstr2, rowno * 4 + 3))
+    _1 = mult(gps(hexstr1, 1), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 5), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 9), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 13), gps(hexstr2, colno * 4 + 3))
     # print(_1.get_bitvector_in_hex())
-    _2 = mult(gps(hexstr1, 2), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 6), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 10), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 14), gps(hexstr2, rowno * 4 + 3))
+    _2 = mult(gps(hexstr1, 2), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 6), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 10), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 14), gps(hexstr2, colno * 4 + 3))
     # print(_2.get_bitvector_in_hex())
-    _3 = mult(gps(hexstr1, 3), gps(hexstr2, rowno * 4)) ^ mult(gps(hexstr1, 7), gps(hexstr2, rowno * 4 + 1)) ^mult(gps(hexstr1, 11), gps(hexstr2, rowno * 4 + 2)) ^ mult(gps(hexstr1, 15), gps(hexstr2, rowno * 4 + 3))
+    _3 = mult(gps(hexstr1, 3), gps(hexstr2, colno * 4)) ^ mult(gps(hexstr1, 7), gps(hexstr2, colno * 4 + 1)) ^mult(gps(hexstr1, 11), gps(hexstr2, colno * 4 + 2)) ^ mult(gps(hexstr1, 15), gps(hexstr2, colno * 4 + 3))
     # print(_3.get_bitvector_in_hex())
 
     return (_0.get_bitvector_in_hex() + _1.get_bitvector_in_hex() + _2.get_bitvector_in_hex() + _3.get_bitvector_in_hex())
@@ -173,14 +173,16 @@ def encryption_round_ten(statematrixstring: str, roundkeys: list):
     return statematrixstring
 
 
-def main():
-    key = BitVector(textstring="Thats my Kung Fu")
-    plaintext = BitVector(textstring="Two One Nine Two")
+def encrypt16(key: str, plaintext: str):
+
+    if len(key) != 16 and len(plaintext) != 16:
+        raise Exception("Length of key / plaintext segment must be 16") 
+    
+    key = BitVector(textstring=key)
+    plaintext = BitVector(textstring=plaintext)
 
     statematrixstring = plaintext.get_bitvector_in_hex()
-    
-    # TODO: validate key and plaintext lengths to be 16 or add padding
-    
+        
     roundkeys = list()
     roundkey = key.get_bitvector_in_hex()
     roundkeys.append(roundkey)
@@ -198,4 +200,7 @@ def main():
 
     print("encrypted hash", statematrixstring)
 
-main()        
+def main():
+    encrypt16("Thats my Kung Fu", "Two One Nine Two")
+
+main()            
