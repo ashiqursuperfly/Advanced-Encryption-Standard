@@ -7,7 +7,6 @@ def decryption_round_zero(state_matrix_str: str, round_keys: list):
 
 
 def decryption_round_one_to_nine(state_matrix_str: str, round_keys: list):
-
     for rk_no in range(9, 0, -1):
         state_matrix_str = circular_byte_shift(state_matrix_str, inverse=True)
         state_matrix_str = sub_byte(state_matrix_str, inverse=True)
@@ -18,7 +17,6 @@ def decryption_round_one_to_nine(state_matrix_str: str, round_keys: list):
 
 
 def decryption_round_ten(state_matrix_str: str, round_keys: list):
-
     state_matrix_str = circular_byte_shift(state_matrix_str, inverse=True)
     state_matrix_str = sub_byte(state_matrix_str, inverse=True)
     state_matrix_str = xor(state_matrix_str, round_keys[0])
@@ -27,7 +25,6 @@ def decryption_round_ten(state_matrix_str: str, round_keys: list):
 
 
 def decrypt16(key: str, ciphertext: str):
-
     key = key.rjust(16, '0')
     key = key[0:16]
 
