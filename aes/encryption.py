@@ -6,15 +6,15 @@ def encryption_round_zero(state_matrix_str: str, round_keys: list):
     return xor(state_matrix_str, round_keys[0])
 
 
-def encryption_round_one_to_nine(state_matrix_string: str, round_keys: list):
+def encryption_round_one_to_nine(state_matrix_str: str, round_keys: list):
 
     for rk_no in range(1, 10):
-        state_matrix_string = sub_byte(state_matrix_string)
-        state_matrix_string = circular_byte_shift(state_matrix_string)
-        state_matrix_string = get_mix_columned_col(0, state_matrix_string) + get_mix_columned_col(1, state_matrix_string) + get_mix_columned_col(2, state_matrix_string) + get_mix_columned_col(3, state_matrix_string)
-        state_matrix_string = xor(state_matrix_string, round_keys[rk_no])
+        state_matrix_str = sub_byte(state_matrix_str)
+        state_matrix_str = circular_byte_shift(state_matrix_str)
+        state_matrix_str = get_mix_columned_col(0, state_matrix_str) + get_mix_columned_col(1, state_matrix_str) + get_mix_columned_col(2, state_matrix_str) + get_mix_columned_col(3, state_matrix_str)
+        state_matrix_str = xor(state_matrix_str, round_keys[rk_no])
 
-    return state_matrix_string
+    return state_matrix_str
 
 
 def encryption_round_ten(state_matrix_str: str, round_keys: list):

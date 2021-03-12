@@ -24,7 +24,7 @@ def get_round_constant(round_no: int):
 """
 
 
-def format_2_digit_hex(hexdigit):
+def format_2_digit_hex(hexdigit: hex):
     _ = hex(hexdigit)[2:]
 
     if len(_) != 2:
