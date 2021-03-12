@@ -18,6 +18,7 @@ def encryption_round_one_to_nine(state_matrix_str: str, round_keys: list):
 
 
 def encryption_round_ten(state_matrix_str: str, round_keys: list):
+
     state_matrix_str = sub_byte(state_matrix_str)
     state_matrix_str = circular_byte_shift(state_matrix_str)
     state_matrix_str = xor(state_matrix_str, round_keys[10])
@@ -26,6 +27,9 @@ def encryption_round_ten(state_matrix_str: str, round_keys: list):
 
 
 def encrypt16(key: str, plaintext: str):
+
+    key = key.rjust(16)
+
     if len(key) != 16 and len(plaintext) != 16:
         raise Exception("Length of key / plaintext segment must be 16")
 
@@ -51,7 +55,7 @@ def encrypt16(key: str, plaintext: str):
 
 
 def main():
-    encrypt16("Thats my Kung Fu", "Two One Nine Two")
+    encrypt16("Thats my ", "Two One Nine Two")
 
 
 if __name__ == '__main__':
