@@ -28,10 +28,10 @@ def encryption_round_ten(state_matrix_str: str, round_keys: list):
 
 def encrypt16(key: str, plaintext: str):
 
-    key = key.rjust(16)
-    plaintext = plaintext.rjust(16)
+    key = key.rjust(16, '0')
+    key = key[0:16]
 
-    if len(key) != 16 and len(plaintext) != 16:
+    if len(key) != 16 or len(plaintext) != 16:
         raise Exception("Length of key / plaintext segment must be 16")
 
     key = BitVector(textstring=key)
@@ -54,9 +54,11 @@ def encrypt16(key: str, plaintext: str):
 
     print("encrypted hash", state_matrix_str)
 
+    return state_matrix_str
+
 
 def main():
-    encrypt16("Thats my ", "Two One Nine")
+    encrypt16("Thats my Kung Fu hahagg", "Two One Nine Two")
 
 
 if __name__ == '__main__':
