@@ -24,18 +24,26 @@ def encryption_round_ten(state_matrix_str: str, round_keys: list):
     return state_matrix_str
 
 
-def encrypt16(key: str, plaintext: str):
+def encrypt16(key: str, bitstring: str = None, hexstring: str = None, textstring: str = None):
+
     key = key.rjust(16, '0')
     key = key[0:16]
-    plaintext = plaintext.ljust(16)
 
-    if len(key) != 16 or len(plaintext) != 16:
-        raise Exception("Length of key / plaintext segment must be 16")
+    if len(key) != 16:
+        raise Exception("Length of key / bitstring segment must be 16")
 
     key = BitVector(textstring=key)
-    plaintext = BitVector(textstring=plaintext)
 
-    state_matrix_str = plaintext.get_bitvector_in_hex()
+    if bitstring is not None:
+        to_encrypt = BitVector(bitstring=bitstring)
+    elif hexstring is not None:
+        to_encrypt = BitVector(hexstring=hexstring)
+        print(hexstring)
+    else:
+        to_encrypt = BitVector(textstring=textstring)
+
+    state_matrix_str = to_encrypt.get_bitvector_in_hex()
+
 
     round_keys = list()
     round_key = key.get_bitvector_in_hex()
@@ -50,13 +58,13 @@ def encrypt16(key: str, plaintext: str):
     state_matrix_str = encryption_round_one_to_nine(state_matrix_str, round_keys)
     state_matrix_str = encryption_round_ten(state_matrix_str, round_keys)
 
-    print("encrypted hash", state_matrix_str)
+    print("encrypted: ", state_matrix_str)
 
     return state_matrix_str
 
 
 def main():
-    encrypt16("Thats my Kung Fu hahagg", "Two One Nine Two")
+    encrypt16("Thats my Kung Fu hahagg", textstring="Two One Nine Two")
 
 
 if __name__ == '__main__':

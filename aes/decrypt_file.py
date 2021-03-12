@@ -1,9 +1,13 @@
 from decryption import decrypt16
 
 
-def append_to_file(content: str, filename: str = "decrypted"):
-    file = open(filename, "a")
-    file.write(content)
+def bitstring_to_bytes(s):
+    return int(s, 2).to_bytes((len(s) + 7) // 8, byteorder='big')
+
+
+def append_to_file(content: str, filename: str = "out/decrypted"):
+    file = open(filename, "ab")
+    file.write(bytearray(bitstring_to_bytes(content)))
     file.close()
 
 
@@ -16,4 +20,4 @@ def decrypt_file(filename: str, key: str):
 
 
 if __name__ == "__main__":
-    decrypt_file('encrypted', "Thats My Kung Fu Dasdas dasdas")
+    decrypt_file('out/encrypted', "Thats My Kung Fu Dasdas dasdas")

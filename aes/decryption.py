@@ -49,10 +49,10 @@ def decrypt16(key: str, ciphertext: str):
     state_matrix_str = decryption_round_one_to_nine(state_matrix_str, round_keys)
     state_matrix_str = decryption_round_ten(state_matrix_str, round_keys)
 
-    result = BitVector(hexstring=state_matrix_str).get_bitvector_in_ascii()
-    print("decrypted text", result)
+    result = BitVector(hexstring=state_matrix_str)
+    print("decrypted: ", result.get_bitvector_in_ascii())
 
-    return result
+    return result.__str__()
 
 
 def main():
