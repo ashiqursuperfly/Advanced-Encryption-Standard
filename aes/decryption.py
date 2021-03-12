@@ -54,7 +54,7 @@ def decrypt16(key: str, ciphertext: str):
 
 
 def main():
-    decrypt16("Thats my ", "d3ca1cc9976600146bf908afa1cc3b6d")
+    decrypt16("Thats my ", "79ccc24dad209ee466c1118f6b0fcf36")
 
 
 if __name__ == '__main__':

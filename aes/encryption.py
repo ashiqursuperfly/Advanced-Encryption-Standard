@@ -29,6 +29,7 @@ def encryption_round_ten(state_matrix_str: str, round_keys: list):
 def encrypt16(key: str, plaintext: str):
 
     key = key.rjust(16)
+    plaintext = plaintext.rjust(16)
 
     if len(key) != 16 and len(plaintext) != 16:
         raise Exception("Length of key / plaintext segment must be 16")
@@ -55,7 +56,7 @@ def encrypt16(key: str, plaintext: str):
 
 
 def main():
-    encrypt16("Thats my ", "Two One Nine Two")
+    encrypt16("Thats my ", "Two One Nine")
 
 
 if __name__ == '__main__':
