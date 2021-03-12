@@ -1,5 +1,4 @@
 from encryption import encrypt16
-from decryption import decrypt16
 
 
 def append_to_file(content: str, filename: str = "encrypted"):
@@ -10,8 +9,6 @@ def append_to_file(content: str, filename: str = "encrypted"):
 
 def encrypt_file(filename: str, key: str):
     file = open(filename, 'r')
-
-    res = str()
 
     for line in file:
         while len(line) != 0:
