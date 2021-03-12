@@ -44,7 +44,6 @@ def encrypt16(key: str, bitstring: str = None, hexstring: str = None, textstring
 
     state_matrix_str = to_encrypt.get_bitvector_in_hex()
 
-
     round_keys = list()
     round_key = key.get_bitvector_in_hex()
     round_keys.append(round_key)
